@@ -1,0 +1,22 @@
+{
+    "plugins": [
+      ["module-resolver", {
+        "root": ["./"],
+        "alias": {
+          "@components": "./src/components",
+          "@screens":"./src/screens",
+          "@navigation":"./src/navigation",
+          "@reducer":"./src/redux/reducer",
+          "@models":"./src/model",
+          "@saga":"./src/redux/saga",
+          "@store":"./src/redux/store",
+          "@common":"./src/common",
+          "@themes":"./src/themes",
+          "@utils":"./src/utils",
+          "@assets":"./src/assets",
+          "@config":"./src/config",
+          "@src":"./src"
+        }
+      }]
+    ]
+  }
