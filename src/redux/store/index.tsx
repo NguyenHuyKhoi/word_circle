@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {combineReducers, configureStore} from '@reduxjs/toolkit';
 import {persistReducer, persistStore} from 'redux-persist';
-import playReducer from '../reducer/playReducer';
+import playReducer from '../reducer/play';
+import gameReducer from '../reducer/game';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
@@ -9,10 +10,15 @@ const persistConfig = {
 };
 const rootReducer = combineReducers({
   play: playReducer,
+  game: gameReducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 const store = configureStore({
   reducer: persistedReducer,
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 const persistor = persistStore(store);
 export {persistor, store};

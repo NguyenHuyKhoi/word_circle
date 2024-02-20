@@ -6,8 +6,6 @@ export interface Point {
 export enum EnumDirection {
   HORIZONTAL = 0,
   VERTICAL = 1,
-  CROSS_UP = 2,
-  CROSS_DOWN = 3,
 }
 
 export interface Difficulty {

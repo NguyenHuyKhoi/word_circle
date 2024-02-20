@@ -6,7 +6,7 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootNavigation = () => {
   return (
-    <RootStack.Navigator>
+    <RootStack.Navigator initialRouteName={APP_SCREEN.LEVEL}>
       <RootStack.Screen
         name={APP_SCREEN.LEVEL}
         component={LevelScreen}

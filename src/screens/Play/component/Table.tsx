@@ -1,105 +1,46 @@
-import {dispatch, useSelector} from '@common';
-import {Point, WordEntity} from '@models';
-import {onSetOriginPoint} from '@reducer';
-import {COLORS} from '@src/themes';
+import {useSelector} from '@common';
 import {sizes} from '@utils';
-import React, {useCallback} from 'react';
-import {FlatList, StyleSheet, Text, View} from 'react-native';
-import {GestureDetector} from './GestureDetector';
-import {WordEffect} from './WordEffect';
+import React from 'react';
+import {StyleSheet, View} from 'react-native';
+import {TableCell} from './TableCell';
+import {CELL_SIZES} from '@config';
 
 export const Table = () => {
-  const {table, words, table_config} = useSelector(x => x.play);
-
-  const {row, col, cell_size} = table_config ?? {};
-
-  const isHighlightCell = useCallback(
-    (cell: Point) => {
-      const exist = words?.find(
-        (word: WordEntity) =>
-          !word.solved && word.hinted && word.y === cell.y && word.x === cell.x,
-      );
-      return exist;
-    },
-    [words],
-  );
-
+  const {table} = useSelector(x => x.play);
+  if (table === undefined || table[0] === undefined) {
+    return undefined;
+  }
+  // const row = table.length;
+  // const col = table[0].length;
+  const cell_size = CELL_SIZES[table[0].length];
   return (
     <View
       style={[
         styles.container,
         {
-          width: (col ?? 1) * (cell_size ?? 1),
-          height: (row ?? 1) * (cell_size ?? 1),
+          // width: (col ?? 1) * (cell_size ?? 1),
+          // height: (row ?? 1) * (cell_size ?? 1),
         },
-      ]}
-      onLayout={event => {
-        event.target.measure((x, y, width, height, pageX, pageY) => {
-          dispatch(
-            onSetOriginPoint({
-              x: x + pageX,
-              y: y + pageY,
-            }),
-          );
-        });
-      }}>
-      <WordEffect />
-      <FlatList
-        data={table ?? []}
-        keyExtractor={(_, index) => index + ''}
-        scrollEnabled={false}
-        renderItem={({item, index}) => (
-          <FlatList
-            data={item}
-            scrollEnabled={false}
-            keyExtractor={(_, colIndex) => colIndex + ''}
-            horizontal
-            renderItem={rowData => {
-              return (
-                <View
-                  style={[
-                    styles.cell,
-                    {
-                      width: cell_size ?? 1,
-                      height: cell_size ?? 1,
-                    },
-                  ]}>
-                  <Text
-                    style={[
-                      styles.label,
-                      {
-                        color: isHighlightCell({x: rowData.index, y: index})
-                          ? COLORS.VeryLightBlue
-                          : COLORS.DarkCharcoal,
-                        fontSize: (cell_size ?? 1) * 0.65,
-                      },
-                    ]}>
-                    {rowData.item}
-                  </Text>
-                </View>
-              );
-            }}
-          />
-        )}
-      />
-      <GestureDetector />
+      ]}>
+      {table.map((row, ri) => (
+        <View style={styles.row} key={ri + ''}>
+          {row.map((cell, ci) => (
+            <TableCell data={cell} size={cell_size} key={ci + ''} />
+          ))}
+        </View>
+      ))}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.white,
     borderRadius: sizes._10sdp,
-    alignSelf: 'center',
-  },
-  cell: {
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: sizes._12sdp,
   },
-  label: {
-    fontSize: sizes._20sdp,
-    fontWeight: '500',
-    color: COLORS.DarkCharcoal,
+  row: {
+    flexDirection: 'row',
   },
 });

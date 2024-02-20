@@ -1,14 +1,11 @@
-import {dispatch, useSelector} from '@common';
-import {EnumGameStatus} from '@models';
-import {onReleaseCell, onSelectCell} from '@reducer';
+import {dispatch} from '@common';
+import {onGestureMove, onGestureRelease} from '@reducer';
 import {sizes} from '@utils';
 import React, {FC} from 'react';
 import {PanResponder, StyleSheet, View} from 'react-native';
 interface Props {}
 export const GestureDetector: FC<Props> = () => {
-  const {status} = useSelector(x => x.play);
-
-  const enable = status === EnumGameStatus.PLAY;
+  const enable = true;
   const panResponder = React.useMemo(
     () =>
       PanResponder.create({
@@ -17,10 +14,9 @@ export const GestureDetector: FC<Props> = () => {
         onStartShouldSetPanResponderCapture: () => enable,
         onMoveShouldSetPanResponder: () => enable,
         onMoveShouldSetPanResponderCapture: () => enable,
-
         onPanResponderGrant: (evt, gestureState) => {
           dispatch(
-            onSelectCell({
+            onGestureMove({
               x: gestureState.x0,
               y: gestureState.y0,
             }),
@@ -28,7 +24,7 @@ export const GestureDetector: FC<Props> = () => {
         },
         onPanResponderMove: (evt, gestureState) => {
           dispatch(
-            onSelectCell({
+            onGestureMove({
               x: gestureState.moveX,
               y: gestureState.moveY,
             }),
@@ -38,7 +34,7 @@ export const GestureDetector: FC<Props> = () => {
         onPanResponderRelease: () => {
           // The user has released all touches while this view is the
           // responder. This typically means a gesture has succeeded
-          dispatch(onReleaseCell());
+          dispatch(onGestureRelease());
         },
         onPanResponderTerminate: () => {
           // Another component has become the responder, so this gesture
@@ -64,6 +60,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     zIndex: 99,
+    // backgroundColor: 'red',
   },
   point: {
     position: 'absolute',

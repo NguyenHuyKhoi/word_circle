@@ -2,10 +2,11 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "resolveJsonModule": true,
     "paths": {
       "@components": ["./src/components"],
       "@screens":["./src/screens"],
-      "@navigation/*":["./src/navigation/*"],
+      "@navigation":["./src/navigation"],
       "@reducer":["./src/redux/reducer"],
       "@saga/*":["./src/redux/saga/*"],
       "@store":["./src/redux/store"],

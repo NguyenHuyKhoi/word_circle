@@ -8,6 +8,8 @@ import mag_glass from './mag_glass.png';
 import refresh from './refresh.png';
 import up from './up.png';
 import down from './down.png';
+import star from './star.png';
+import level_up from './level_up.png';
 export const icons = {
   correct,
   wrong,
@@ -19,4 +21,6 @@ export const icons = {
   refresh,
   up,
   down,
+  star,
+  level_up,
 };

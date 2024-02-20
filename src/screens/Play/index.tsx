@@ -1,35 +1,78 @@
 import {dispatch, useSelector} from '@common';
-import {MyStatusBar} from '@components';
-import {onStartGame} from '@reducer';
+import {Header} from '@components';
+import {onSetupGame} from '@reducer';
 import {COLORS} from '@themes';
 import {sizes} from '@utils';
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {Footer, Table, Words} from './component';
+import {Circle, CurrentWord, Footer, Table} from './component';
 export const PlayScreen = ({}) => {
-  const {word} = useSelector(x => x.play);
-  useEffect(() => {
-    dispatch(onStartGame());
-  }, []);
+  const {worldPointer, circlePointer} = useSelector(x => x.play);
+  const {categories, cat_id} = useSelector(x => x.game);
 
+  const category = categories.find(item => item.id === cat_id)!;
+  const {win_levels, total_levels} = category;
+  const onStartGame = useCallback(() => {
+    dispatch(onSetupGame(category));
+  }, [category]);
+
+  useEffect(() => {
+    onStartGame();
+  }, [onStartGame]);
+
+  const debug = false;
   return (
     <View style={styles.container}>
-      <MyStatusBar backgroundColor={COLORS.LightSkyBlue} />
-      <View style={styles.wordView}>
-        <Text style={styles.wordValue}>{word}</Text>
-      </View>
-      <Words style={styles.words} />
-      <View style={styles.table}>
+      <Header title={`${win_levels + 1} / ${total_levels}`} />
+      <View
+        // eslint-disable-next-line react-native/no-inline-styles
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
         <Table />
       </View>
+      <CurrentWord />
+      <Circle />
+      <View style={{height: sizes._12sdp}} />
       <Footer />
+      <View style={{height: sizes._20sdp}} />
+      {debug && worldPointer && (
+        <>
+          <View
+            // eslint-disable-next-line react-native/no-inline-styles
+            style={{
+              width: sizes._10sdp,
+              height: sizes._10sdp,
+              backgroundColor: COLORS.Pigment,
+              position: 'absolute',
+              top: worldPointer?.y ?? 0,
+              left: worldPointer?.x ?? 0,
+            }}
+          />
+        </>
+      )}
+      {debug && circlePointer && worldPointer && (
+        <Text
+          // eslint-disable-next-line react-native/no-inline-styles
+          style={{
+            fontSize: sizes._10sdp,
+            fontWeight: '700',
+            position: 'absolute',
+            top: worldPointer?.y ?? 0 - 20,
+            left: worldPointer?.x ?? 0,
+          }}>
+          {`${Math.floor(circlePointer.x)}-${Math.floor(circlePointer.y)}`}
+        </Text>
+      )}
     </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.LightSkyBlue,
+    backgroundColor: COLORS.AzureishWhite,
     flexDirection: 'column',
   },
   wordView: {

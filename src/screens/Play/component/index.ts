@@ -1,3 +1,4 @@
+export * from './Circle';
+export * from './CurrentWord';
 export * from './Table';
-export * from './Words';
 export * from './Footer';

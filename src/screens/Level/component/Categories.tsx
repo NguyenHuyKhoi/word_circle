@@ -1,81 +1,71 @@
+import {images} from '@assets';
 import {dispatch, useSelector} from '@common';
-import {Text} from '@components';
-import {CategoryConfigs} from '@config';
-import {Category} from '@models';
+import {APP_SCREEN, RootStackParamList} from '@navigation';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {onSelectCategory} from '@reducer';
 import {COLORS} from '@themes';
 import {sizes} from '@utils';
-import React from 'react';
+import React, {useCallback} from 'react';
 import {
   FlatList,
   Image,
   StyleSheet,
   TouchableOpacity,
   View,
+  Text,
 } from 'react-native';
 
-const NUM_COL = 3;
 export const Categories = () => {
-  const {category} = useSelector(x => x.play);
-  const list: (Category | null)[] = [...CategoryConfigs];
-  while (list.length % NUM_COL !== 0) {
-    list.push(null);
-  }
+  const {categories} = useSelector(x => x.game);
+  const navigation =
+    useNavigation<
+      NativeStackNavigationProp<RootStackParamList, APP_SCREEN.LEVEL>
+    >();
+  const handlePlay = useCallback(
+    (cat_id: number) => {
+      dispatch(onSelectCategory(cat_id));
+      setTimeout(() => {
+        navigation.navigate(APP_SCREEN.PLAY);
+      }, 200);
+    },
+    [navigation],
+  );
   return (
     <View style={styles.container}>
       <FlatList
-        data={list}
+        data={categories}
         keyExtractor={(_, index) => index + ''}
-        numColumns={NUM_COL}
+        numColumns={1}
         style={styles.list}
         showsVerticalScrollIndicator={false}
-        renderItem={({item}) =>
-          item === null ? (
-            <View style={styles.itemView} />
-          ) : (
-            <TouchableOpacity
-              onPress={() => {
-                dispatch(onSelectCategory(item.type));
-              }}
-              style={[
-                styles.itemView,
-                {
-                  backgroundColor:
-                    category === item.type
-                      ? COLORS.LightSkyBlue
-                      : COLORS.AzureishWhite + '99',
-                },
-              ]}>
-              <Text
-                style={[
-                  styles.itemName,
-                  // eslint-disable-next-line react-native/no-inline-styles
-                  {
-                    fontSize:
-                      item.name.length <= 10 ? sizes._14sdp : sizes._12sdp,
-                    fontWeight: category === item.type ? '700' : '400',
-                    color:
-                      category === item.type
-                        ? COLORS.white
-                        : COLORS.DarkCharcoal,
-                  },
-                ]}>
-                {item.name}
-              </Text>
-              <View style={styles.imageView}>
-                <Image
-                  source={item.image}
-                  style={[
-                    styles.itemImage,
-                    {
-                      transform: [{scale: category === item.type ? 1 : 0.6}],
-                    },
-                  ]}
-                />
+        renderItem={({item}) => (
+          <TouchableOpacity
+            onPress={() => {
+              handlePlay(item.id);
+            }}
+            style={[
+              styles.itemView,
+              {
+                backgroundColor: COLORS.LightSkyBlue,
+              },
+            ]}>
+            <View style={styles.difficultyView}>
+              <Text style={styles.difficultyLabel}>{'Difficulty'}</Text>
+              <View style={styles.difficultyStars}>
+                {new Array(item.char_count).fill(0).map(() => (
+                  <Image source={images.icons.star} style={styles.star} />
+                ))}
               </View>
-            </TouchableOpacity>
-          )
-        }
+            </View>
+            <View style={styles.levelView}>
+              <Text style={styles.levelLabel}>{'Level:'}</Text>
+              <Text style={styles.levelValue}>{`${item.win_levels + 1} / ${
+                item.total_levels
+              }`}</Text>
+            </View>
+          </TouchableOpacity>
+        )}
       />
     </View>
   );
@@ -90,30 +80,47 @@ const styles = StyleSheet.create({
   list: {},
   itemView: {
     flex: 1,
-    paddingHorizontal: sizes._4sdp,
-    paddingVertical: sizes._4sdp,
-    borderRadius: sizes._8sdp,
+    paddingHorizontal: sizes._8sdp,
+    paddingVertical: sizes._8sdp,
+    borderRadius: sizes._6sdp,
     flexDirection: 'column',
-    marginHorizontal: sizes._6sdp,
-    marginVertical: sizes._6sdp,
+    marginHorizontal: sizes._12sdp,
+    marginVertical: sizes._8sdp,
   },
-  itemImage: {
-    height: sizes._45sdp,
-    marginVertical: sizes._10sdp,
-    aspectRatio: 1,
-  },
-  imageView: {
-    height: sizes._60sdp,
-    backgroundColor: COLORS.white,
-    justifyContent: 'center',
+  levelView: {
+    flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: sizes._8sdp,
+    justifyContent: 'space-between',
+    marginTop: sizes._4sdp,
   },
-  itemName: {
-    fontWeight: '500',
-    color: COLORS.DarkCharcoal,
-    textTransform: 'uppercase',
-    alignSelf: 'center',
-    marginVertical: sizes._4sdp,
+  levelLabel: {
+    fontSize: sizes._16sdp,
+    fontWeight: '600',
+    color: COLORS.white,
+  },
+  levelValue: {
+    fontSize: sizes._20sdp,
+    fontWeight: '700',
+    color: COLORS.white,
+    marginLeft: sizes._8sdp,
+  },
+  difficultyView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  difficultyLabel: {
+    fontSize: sizes._16sdp,
+    fontWeight: '600',
+    color: COLORS.white,
+  },
+  difficultyStars: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  star: {
+    width: sizes._20sdp,
+    height: sizes._20sdp,
+    marginVertical: sizes._2sdp,
   },
 });
