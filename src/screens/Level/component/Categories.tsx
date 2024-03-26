@@ -59,7 +59,7 @@ export const Categories = () => {
               </View>
             </View>
             <View style={styles.levelView}>
-              <Text style={styles.levelLabel}>{'Level:'}</Text>
+              <Text style={styles.levelLabel}>{'Level'}</Text>
               <Text style={styles.levelValue}>{`${item.win_levels + 1} / ${
                 item.total_levels
               }`}</Text>

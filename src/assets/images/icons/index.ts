@@ -10,6 +10,7 @@ import up from './up.png';
 import down from './down.png';
 import star from './star.png';
 import level_up from './level_up.png';
+import shuffle from './shuffle.png';
 export const icons = {
   correct,
   wrong,
@@ -23,4 +24,5 @@ export const icons = {
   down,
   star,
   level_up,
+  shuffle,
 };

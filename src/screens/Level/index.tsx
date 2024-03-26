@@ -8,7 +8,7 @@ import {Categories} from './component';
 export const LevelScreen = () => {
   return (
     <View style={styles.container}>
-      <Header title="Word x Word" backDisabled />
+      <Header title="Word Circle" backDisabled />
       <Categories />
     </View>
   );
